@@ -5,6 +5,11 @@
         <h5><strong>{{ business.license_name }}</strong></h5>
         <div class="text-muted">{{ business.address }}</div>
         <div class="text-muted">{{ member.type === 'manager' ? '관리자' : '일반 직원' }}</div>
+        <div v-if="salary">{{ salary.year }}년 {{ salary.month }}월</div>
+        <div v-if="salary">급여 총액: {{ salary.total_monthly_pay }}원</div>
+        <div v-if="salary">총 근무시간: {{ salary.total_hours }}시간</div>
+        <div v-if="salary">기본급: {{ salary.base_salary }}원</div>
+        <div v-if="salary">총 주휴수당: {{ salary.total_extra_pay }}원</div>
       </div>
       <router-link :to="{ name: 'add-member', params: { id: member.business.id } }" v-if="member && member.type === 'manager'">+ 직원 추가</router-link>
     </div>
@@ -108,7 +113,7 @@
           <td>{{ member.created.slice(0, 10) }}</td>
           <td>{{ member.user.sex === 'male' ? '남' : '여' }}</td>
           <td>{{ member.type === 'manager' ? '관리자' : '일반 직원'}}</td>
-          <td></td>
+          <td>{{ member.hourly_wage }}</td>
         </tr>
         </tbody>
       </table>
@@ -127,7 +132,10 @@ export default {
       works: [],
       business: null,
       selectedTab: '주별 근무 통계',
+      salary: null,
       today: moment().format(),
+      selectedYear: moment().year(),
+      selectedMonth: moment().month(),
       form: {
         start_time: moment().format('YYYY-MM-DThh:mm').toString(),
         end_time: moment().format('YYYY-MM-DThh:mm').toString()
@@ -230,11 +238,13 @@ export default {
   mounted () {
     this.getBusiness()
     this.load()
+    let year = this.selectedYear ? this.selectedYear : moment().year()
+    let month = this.selectedMonth ? this.selectedMonth : moment().month() + 1
     let baseURL = 'http://localhost:8000'
-    axios.get(`${baseURL}/api/v1/works/get_monthly_salary/?business=${this.business.id}`, {
+    axios.get(`${baseURL}/api/v1/works/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}`, {
       headers: { 'Authorization': 'Token ' + this.$store.state.token }
     }).then(res => {
-      console.log('월급', res.data)
+      this.salary = res.data
     }).catch(err => console.log(err))
   }
 }
