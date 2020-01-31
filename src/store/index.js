@@ -39,6 +39,9 @@ export default new Vuex.Store({
     WORKS (state, works) {
       state.works = works
     },
+    ADDWORKS (state, works) {
+      state.works.push(works)
+    },
     TIMETABLES (state, timetables) {
       state.timetables = timetables
     }
@@ -103,6 +106,13 @@ export default new Vuex.Store({
       }).then(res => {
         commit('WORKS', res.data)
       }).catch(err => console.log(err))
+    },
+    ADDWORKS ({ commit }, form) {
+      return axios.post(`${baseURL}/api/v1/works/`, form, {
+        headers: { 'Authorization': 'Token ' + this.state.token }
+      }).then(res => {
+        commit('ADDWORKS', res.data)
+      })
     },
     ADDBUSINESS ({ commit }, form) {
       return axios.post(`${baseURL}/api/v1/businesses/`, form, {
