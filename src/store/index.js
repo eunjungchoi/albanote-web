@@ -101,6 +101,13 @@ export default new Vuex.Store({
         commit('WORKS', res.data)
       }).catch(err => console.log(err))
     },
+    ADDBUSINESS ({ commit }, form) {
+      return axios.post(`${baseURL}/api/v1/businesses/`, form, {
+        headers: { 'Authorization': 'Token ' + this.state.token }
+      }).then(res => {
+        commit('ADDMEMBER', res.data.member)
+      })
+    }
   },
   modules: {
   }

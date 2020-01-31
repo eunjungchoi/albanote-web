@@ -17,6 +17,7 @@ const routes = [
   { path: '/signup', name: 'signup', component: Signup },
   { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },
   { path: '/business/:id', name: 'business', component: Business, meta: { requiresAuth: true } },
+  { path: '/add-business/', name: 'add-business', component: AddBusiness, meta: { requiresAuth: true } }
 ]
 
 const router = new VueRouter({
