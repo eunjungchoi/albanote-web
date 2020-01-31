@@ -14,7 +14,8 @@ Vue.use(VueRouter)
 const routes = [
   { path: '/', redirect: '/dashboard' },
   { path: '/login', name: 'login', component: Login },
-  { path: '/signup', name: 'signup', component: Signup }
+  { path: '/signup', name: 'signup', component: Signup },
+  { path: '/dashboard', name: 'dashboard', component: Dashboard, meta: { requiresAuth: true } },
 ]
 
 const router = new VueRouter({
