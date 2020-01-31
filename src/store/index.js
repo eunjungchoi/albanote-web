@@ -35,6 +35,13 @@ export default new Vuex.Store({
     LOGOUT ({ commit }) {
       commit('LOGOUT')
     },
+    SIGNUP ({ commit }, { username, password1, password2 }) {
+      return axios.post(`${baseURL}/rest-auth/registration/`, { username, password1, password2 })
+        .catch(e => {
+          console.log(e)
+          alert('회원가입에 실패했습니다.')
+        })
+    },
     USER ({ commit }) {
       return axios.get(`${baseURL}/api/v1/users/me/`, {
         headers: { 'Authorization': 'Token ' + this.state.token }
