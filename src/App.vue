@@ -72,6 +72,7 @@ export default {
   },
   mounted () {
     this.$store.dispatch('USER')
+    this.$store.dispatch('MEMBERS')
   }
 }
 </script>
