@@ -11,6 +11,10 @@ export default new Vuex.Store({
   state: {
     token: null,
     user: null,
+    members: null,
+    allMembers: null,
+    works: null,
+    timetables: null
   },
   mutations: {
     LOGIN (state, token) {
@@ -23,6 +27,18 @@ export default new Vuex.Store({
     USER (state, user) {
       state.user = user
     },
+    MEMBERS (state, members) {
+      state.members = members
+    },
+    ALL_MEMBERS_OF_BUSINESS (state, members) {
+      state.allMembers = members
+    },
+    WORKS (state, works) {
+      state.works = works
+    },
+    TIMETABLES (state, timetables) {
+      state.timetables = timetables
+    }
   },
   actions: {
     LOGIN ({ commit }, { username, password }) {
@@ -48,6 +64,42 @@ export default new Vuex.Store({
       }).then(res => {
         commit('USER', res.data)
       })
+    },
+    MEMBERS ({ commit }) {
+      return axios.get(`${baseURL}/api/v1/members/`, {
+        headers: { 'Authorization': 'Token ' + this.state.token }
+      }).then(res => {
+        commit('MEMBERS', res.data)
+      }).catch(err => console.log(err))
+    },
+    ALL_MEMBERS_OF_BUSINESS ({ commit }, businessId) {
+      return axios.get(`${baseURL}/api/v1/members/all_members_of_business/?business=${businessId}`, {
+        headers: { 'Authorization': 'Token ' + this.state.token }
+      }).then(res => {
+        commit('ALL_MEMBERS_OF_BUSINESS', res.data)
+      }).catch(err => console.log(err))
+    },
+    TIMETABLES ({ commit }, businessId) {
+      let url = `${baseURL}/api/v1/timetables`
+      if (businessId) {
+        url = `${url}/?business=${businessId}`
+      }
+      return axios.get(url, {
+        headers: { 'Authorization': 'Token ' + this.state.token }
+      }).then(res => {
+        commit('TIMETABLES', res.data)
+      }).catch(err => console.log(err))
+    },
+    WORKS ({ commit }, businessId, month) {
+      let url = `${baseURL}/api/v1/works`
+      if (businessId) {
+        url = `${url}/?business=${businessId}`
+      }
+      return axios.get(url, {
+        headers: { 'Authorization': 'Token ' + this.state.token }
+      }).then(res => {
+        commit('WORKS', res.data)
+      }).catch(err => console.log(err))
     },
   },
   modules: {
