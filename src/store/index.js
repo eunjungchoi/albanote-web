@@ -33,6 +33,9 @@ export default new Vuex.Store({
     ALL_MEMBERS_OF_BUSINESS (state, members) {
       state.allMembers = members
     },
+    ADDMEMBER (state, member) {
+      state.members.push(member)
+    },
     WORKS (state, works) {
       state.works = works
     },
