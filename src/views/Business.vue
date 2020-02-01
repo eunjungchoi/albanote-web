@@ -164,14 +164,25 @@ export default {
       return this.member.type === 'manager' ? ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표', '직원 관리'] : ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표']
     },
     thisWeek () {
+      if (moment().weekday() === 0) {
+        return [
+          ['monday', moment().day('-6').format('M/D ddd YYYY')],
+          ['tuesday', moment().day('-5').format('M/D ddd YYYY')],
+          ['wednesday', moment().day('-4').format('M/D ddd YYYY')],
+          ['thursday', moment().day('-3').format('M/D ddd YYYY')],
+          ['friday', moment().day('-2').format('M/D ddd YYYY')],
+          ['saturday', moment().day('-1').format('M/D ddd YYYY')],
+          ['sunday', moment().day('0').format('M/D ddd YYYY')]
+        ]
+      }
       return [
-        ['sunday', moment().day('Sunday').format('M/D ddd YYYY')],
-        ['monday', moment().day('Monday').format('M/D ddd YYYY')],
-        ['tuesday', moment().day('Tuesday').format('M/D ddd YYYY')],
-        ['wednesday', moment().day('Wednesday').format('M/D ddd YYYY')],
-        ['thursday', moment().day('Thursday').format('M/D ddd YYYY')],
-        ['friday', moment().day('Friday').format('M/D ddd YYYY')],
-        ['saturday', moment().day('Saturday').format('M/D ddd YYYY')]
+        ['monday', moment().day('1').format('M/D ddd YYYY')],
+        ['tuesday', moment().day('2').format('M/D ddd YYYY')],
+        ['wednesday', moment().day('3').format('M/D ddd YYYY')],
+        ['thursday', moment().day('4').format('M/D ddd YYYY')],
+        ['friday', moment().day('5').format('M/D ddd YYYY')],
+        ['saturday', moment().day('6').format('M/D ddd YYYY')],
+        ['sunday', moment().day('7').format('M/D ddd YYYY')]
       ]
     }
   },
