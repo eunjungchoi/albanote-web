@@ -59,7 +59,7 @@ export default new Vuex.Store({
   },
   actions: {
     LOGIN ({ commit }, { username, password }) {
-      return api.post(`${baseURL}/rest-auth/login/`, { username, password })
+      return axios.post(`${baseURL}/rest-auth/login/`, { username, password })
         .then(res => {
           localStorage.setItem('token', res.data.key)
           commit('LOGIN', res.data.key)
@@ -69,27 +69,26 @@ export default new Vuex.Store({
       commit('LOGOUT')
     },
     SIGNUP ({ commit }, { username, password1, password2 }) {
-      return api.post(`${baseURL}/rest-auth/registration/`, { username, password1, password2 })
+      return axios.post(`${baseURL}/rest-auth/registration/`, { username, password1, password2 })
         .catch(e => {
           console.log(e)
           alert('회원가입에 실패했습니다.')
         })
     },
     USER ({ commit }) {
-      return api.get(`${baseURL}/api/v1/users/me/`).then(res => commit('USER', res.data))
+      return api.get(`/api/v1/users/me/`).then(res => commit('USER', res.data))
     },
     MEMBERS ({ commit }) {
-      return api.get(`${baseURL}/api/v1/members/`, {
-      }).then(res => commit('MEMBERS', res.data))
+      return api.get(`/api/v1/members/`).then(res => commit('MEMBERS', res.data))
         .catch(err => console.log(err))
     },
     ALL_MEMBERS_OF_BUSINESS ({ commit }, businessId) {
-      return api.get(`${baseURL}/api/v1/members/all_members_of_business/?business=${businessId}`, {
-      }).then(res => commit('ALL_MEMBERS_OF_BUSINESS', res.data))
+      return api.get(`/api/v1/members/all_members_of_business/?business=${businessId}`)
+        .then(res => commit('ALL_MEMBERS_OF_BUSINESS', res.data))
         .catch(err => console.log(err))
     },
     TIMETABLES ({ commit }, businessId) {
-      let url = `${baseURL}/api/v1/timetables`
+      let url = `/api/v1/timetables`
       if (businessId) {
         url = `${url}/?business=${businessId}`
       }
@@ -97,7 +96,7 @@ export default new Vuex.Store({
         .catch(err => console.log(err))
     },
     WORKS ({ commit }, businessId, month) {
-      let url = `${baseURL}/api/v1/works`
+      let url = `/api/v1/works`
       if (businessId) {
         url = `${url}/?business=${businessId}`
       }
@@ -105,10 +104,10 @@ export default new Vuex.Store({
         .catch(err => console.log(err))
     },
     ADDWORKS ({ commit }, form) {
-      return api.post(`${baseURL}/api/v1/works/`, form).then(res => commit('ADDWORKS', res.data))
+      return api.post(`/api/v1/works/`, form).then(res => commit('ADDWORKS', res.data))
     },
     ADDBUSINESS ({ commit }, form) {
-      return api.post(`${baseURL}/api/v1/businesses/`, form).then(res => commit('ADDMEMBER', res.data.member))
+      return api.post(`/api/v1/businesses/`, form).then(res => commit('ADDMEMBER', res.data.member))
     }
   },
   modules: {
