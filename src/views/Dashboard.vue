@@ -26,7 +26,7 @@
         </thead>
         <tbody>
         <tr :key="time.day" v-for="time in $store.state.timetables">
-          <td>{{ time.day }}</td>
+          <td>{{ humanReadableDay(time.day) }}</td>
           <td>{{ time.member.business.license_name}}</td>
           <td>{{ time.start_time.slice(0 ,-3) }}</td>
           <td>{{ time.end_time.slice(0, -3) }}</td>
@@ -63,6 +63,20 @@ export default {
     return {
       members: this.$store.state.members,
       works: this.$store.state.works
+    }
+  },
+  methods: {
+    humanReadableDay (day) {
+      let map = {
+        0: '월',
+        1: '화',
+        2: '수',
+        3: '목',
+        4: '금',
+        5: '토',
+        6: '일'
+      }
+      return map[day]
     }
   },
   mounted () {

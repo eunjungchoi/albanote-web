@@ -134,13 +134,6 @@ export default {
     nthOfMonth () {
       return Math.ceil(moment().date() / 7)
     },
-    // humanReadableDay (day) {
-    //   let map = {
-    //     1: '월',
-    //     2: '화'
-    //   }
-    //   return map[day]
-    // },
     memberSet () {
       if (!(this.member)) return
       if (this.member.type === 'manager') {
