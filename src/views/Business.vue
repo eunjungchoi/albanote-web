@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="my-3 d-flex justify-content-between">
+    <div class="my-3 d-flex justify-content-between" v-if="member">
       <div v-if="business">
         <h5><strong>{{ business.license_name }}</strong></h5>
         <div class="text-muted">{{ business.address }}</div>
@@ -41,13 +41,7 @@
     <div v-if="selectedTab === '근무내역 상세보기'">
       <table class="w-100">
         <thead>
-          <th> 담당자</th>
-          <th> 날짜 </th>
-          <th> 출근시간 </th>
-          <th> 퇴근시간 </th>
-          <th> 총 근무시간 </th>
-          <th> 지각 </th>
-          <th> 조퇴 </th>
+          <th :key="column" v-for="column in workLogDetailColumns">{{ column }}</th>
         </thead>
         <tbody>
           <tr :key="work.start_time" v-for="work in $store.state.works">
@@ -79,10 +73,7 @@
       </div>
       <table class="w-100">
         <thead>
-        <th>요일</th>
-        <th>시작시간</th>
-        <th>종료시간</th>
-        <th>담당자</th>
+        <th :key="column" v-for="column in timetableColumns"> {{ column }}</th>
         </thead>
         <tbody>
         <tr :key="time.day" v-for="time in $store.state.timetables">
@@ -97,23 +88,18 @@
     <div v-if="selectedTab === '직원 관리' && member && member.type === 'manager'">
       <table class="w-100">
         <thead>
-          <th>이름</th>
-          <th>전화번호</th>
-          <th>최근 출근일</th>
-          <th>가입일</th>
-          <th>성별</th>
-          <th>직급</th>
-          <th>시급</th>
+          <th :key="column" v-for="column in memberListColumns">{{ column }}</th>
         </thead>
         <tbody>
         <tr :key="member.user.username" v-for="member in $store.state.allMembers">
           <td>{{ member.user.name }}</td>
           <td>{{ member.user.phone }}</td>
-          <td>{{ member.updated }}</td>
+          <td>{{ member.latest_work_date ? member.latest_work_date.slice(0, 10) : ''}}</td>
           <td>{{ member.created.slice(0, 10) }}</td>
           <td>{{ member.user.sex === 'male' ? '남' : '여' }}</td>
           <td>{{ member.type === 'manager' ? '관리자' : '일반 직원'}}</td>
           <td>{{ member.hourly_wage }}</td>
+          <td>{{ member.status === 'active' ? '재직 중' : '퇴사' }}</td>
         </tr>
         </tbody>
       </table>
@@ -133,6 +119,9 @@ export default {
       business: null,
       selectedTab: '주별 근무 통계',
       salary: null,
+      workLogDetailColumns: ['담당자', '날짜', '출근시간', '퇴근시간', '총 근무시간', '지각', '조퇴'],
+      timetableColumns: ['요일', '시작시간', '종료시간', '담당자'],
+      memberListColumns: ['이름', '전화번호', '최근 출근일', '가입일', '성별', '직급', '시급', '상태'],
       today: moment().format(),
       selectedYear: moment().year(),
       selectedMonth: moment().month(),
