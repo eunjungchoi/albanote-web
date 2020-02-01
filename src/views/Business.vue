@@ -5,11 +5,6 @@
         <h5><strong>{{ business.license_name }}</strong></h5>
         <div class="text-muted">{{ business.address }}</div>
         <div class="text-muted">{{ member.type === 'manager' ? '관리자' : '일반 직원' }}</div>
-        <div v-if="salary">{{ salary.year }}년 {{ salary.month }}월</div>
-        <div v-if="salary">급여 총액: {{ salary.total_monthly_pay }}원</div>
-        <div v-if="salary">총 근무시간: {{ salary.total_hours }}시간</div>
-        <div v-if="salary">기본급: {{ salary.base_salary }}원</div>
-        <div v-if="salary">총 주휴수당: {{ salary.total_extra_pay }}원</div>
       </div>
       <router-link :to="{ name: 'add-member', params: { id: member.business.id } }" v-if="member && member.type === 'manager'">+ 직원 추가</router-link>
     </div>
@@ -32,10 +27,33 @@
            <template v-for="day in thisWeek">
              <td :key="day[0]">{{ getDuration(member, day) }}</td>
            </template>
-           <td></td>
-           <td>{{ monthlySum(member).slice(0, -3)}}</td>
+           <td> {{ weeklySum(member) }}시간</td>
+           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_hours : 0 }}시간</td>
          </tr>
       </tbody>
+      </table>
+    </div>
+    <div v-if="selectedTab === '월급 통계'">
+      <h6>{{ selectedYear }} 년 {{ selectedMonth }}월 </h6>
+      <table class="w-100">
+        <thead>
+        <th>담당자 </th>
+        <th>총 근무시간</th>
+        <th>시급 (원)</th>
+        <th>기본급 (원) </th>
+        <th>총 주휴수당</th>
+        <th><strong>급여 총액</strong></th>
+        </thead>
+        <tbody>
+        <tr :key="member.id" v-for="member in memberSet">
+          <td>{{ member.user.name }}</td>
+          <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_hours : 0}}시간 </td>
+          <td>{{ member.hourly_wage}} </td>
+          <td>{{ getMemberSalary(member) ? getMemberSalary(member).base_salary : 0}} </td>
+          <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_extra_pay : 0}}원 </td>
+          <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_monthly_pay : 0}}원</td>
+        </tr>
+        </tbody>
       </table>
     </div>
     <div v-if="selectedTab === '근무내역 상세보기'">
@@ -143,7 +161,7 @@ export default {
     },
     tabs () {
       if (!(this.member)) return
-      return this.member.type === 'manager' ? ['주별 근무 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표', '직원 관리'] : ['주별 근무 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표']
+      return this.member.type === 'manager' ? ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표', '직원 관리'] : ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표']
     },
     thisWeek () {
       return [
@@ -198,16 +216,21 @@ export default {
       })
       if (work) return work.duration.slice(0, -3)
     },
-    monthlySum (member) {
-      let workList = this.$store.state.works.filter((work) => {
-        return work.member.user.username === member.user.username
-      })
-      let sum = 0
-      workList.forEach(work => {
-        let seconds = moment.duration(work.duration).asSeconds()
-        sum += seconds
-      })
-      return moment.utc(sum * 1000).format('HH:mm:ss')
+    weeklySum (member) {
+      if (!this.salary) return
+      let memberSalary = this.getMemberSalary(member)
+      let firstDayOfTheWeek = this.thisWeek[0][1]
+      let date = moment(firstDayOfTheWeek, 'M/D ddd YYYY').format('YYYY-MM-DD')
+      return memberSalary ? memberSalary.weekly_hours[date] : 0
+    },
+    getMemberSalary (member) {
+      let memberSalary = 0
+      if (this.salary) {
+        memberSalary = this.salary.members.find(m => {
+          return m.id === member.id
+        })
+      }
+      return memberSalary
     },
     getBusiness () {
       this.member = this.$store.state.members.find(m => {
