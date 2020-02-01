@@ -26,7 +26,6 @@
 </template>
 <script>
 import moment from 'moment'
-import axios from 'axios'
 
 export default {
   name: 'timetable',
@@ -66,14 +65,8 @@ export default {
   },
   methods: {
     add () {
-      // this.$store.dispatch('ADDTIMETABLE', this.form)
-      const baseURL = 'http://localhost:8000'
       Object.assign(this.form, { 'business_id': this.member.business.id })
-      axios.post(`${baseURL}/api/v1/timetables/`, this.form, {
-        headers: { 'Authorization': 'Token ' + this.$store.state.token }
-      }).then(res => {
-        console.log(res.data)
-      })
+      this.$api.post(`/api/v1/timetables/`, this.form).then(res => console.log(res.data))
     }
   },
   mounted () {

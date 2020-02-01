@@ -21,7 +21,6 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 export default {
   name: 'addMember',
   data () {
@@ -39,11 +38,7 @@ export default {
   methods: {
     add () {
       Object.assign(this.form, { 'business_id': this.member.business.id })
-      // const baseURL = 'http://albabasic-dev.us-west-2.elasticbeanstalk.com'
-      const baseURL = 'http://localhost:8000'
-      axios.post(`${baseURL}/api/v1/members/`, this.form, {
-        headers: { 'Authorization': 'Token ' + this.$store.state.token }
-      }).then(res => {
+      this.$api.post(`/api/v1/members/`, this.form).then(res => {
         this.added = true
         this.newlyAddedMember = res.data
         this.$router.back()

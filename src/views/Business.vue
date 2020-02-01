@@ -108,7 +108,6 @@
 </template>
 <script>
 import moment from 'moment'
-import axios from 'axios'
 
 export default {
   name: 'business',
@@ -229,10 +228,7 @@ export default {
     this.load()
     let year = this.selectedYear ? this.selectedYear : moment().year()
     let month = this.selectedMonth ? this.selectedMonth : moment().month() + 1
-    let baseURL = 'http://localhost:8000'
-    axios.get(`${baseURL}/api/v1/works/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}`, {
-      headers: { 'Authorization': 'Token ' + this.$store.state.token }
-    }).then(res => {
+    this.$api.get(`/api/v1/works/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}`).then(res => {
       this.salary = res.data
     }).catch(err => console.log(err))
   }
