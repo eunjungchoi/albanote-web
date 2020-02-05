@@ -128,7 +128,7 @@
       </b-form>
     </div>
     <div v-if="selectedTab === '스케줄표'">
-      <div class="my-3 text-right">
+      <div class="my-3 text-right" v-if="member.type === 'manager'">
         <router-link :to="{ name: 'add-timetable', params: { id: member.business.id }}" class="border-circle p-2">+ 스케쥴 추가</router-link>
       </div>
       <table class="w-100">
@@ -136,7 +136,7 @@
         <th :key="column" v-for="column in timetableColumns"> {{ column }}</th>
         </thead>
         <tbody>
-        <tr :key="time.day" v-for="time in $store.state.timetables">
+        <tr :key="time.day + time.member.user.name" v-for="time in $store.state.timetables">
           <td>{{ humanReadableDay(time.day) }}</td>
           <td>{{ time.start_time.slice(0, -3) }}</td>
           <td>{{ time.end_time.slice(0, -3) }}</td>
@@ -145,7 +145,7 @@
         </tbody>
       </table>
     </div>
-    <div v-if="selectedTab === '직원 관리' && member && member.type === 'manager'">
+    <div v-if="selectedTab === '직원 정보'">
       <table class="w-100">
         <thead>
           <th :key="column" v-for="column in memberListColumns">{{ column }}</th>
@@ -198,10 +198,10 @@ export default {
       business: null,
       selectedTab: '주별 근무 통계',
       salary: null,
-      workLogDetailColumns: ['담당자', '날짜', '출근시간', '퇴근시간', '총 근무시간', '지각', '조퇴'],
       prevMonthSalary: null,
+      workLogDetailColumns: ['담당자', '날짜', '출근시간', '퇴근시간', '총 근무시간', '지각', '조퇴', '부재'],
       timetableColumns: ['요일', '시작시간', '종료시간', '담당자'],
-      memberListColumns: ['이름', '전화번호', '최근 출근일', '가입일', '성별', '직급', '시급', '상태'],
+      memberListColumns: ['이름', '전화번호', '최근 출근일', '가입일', '성별', '직급', '시급', '연차', '상태'],
       holidays: null,
       today: moment().format(),
       selectedYear: moment().year(),
