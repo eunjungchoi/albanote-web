@@ -156,6 +156,25 @@
         </tbody>
       </table>
     </div>
+    <div v-if="selectedTab === '휴일 시스템'">
+       <div class="my-3 text-right">
+         <router-link :to="{ name: 'add-holiday', params: { id: member.business.id } }" v-if="member && member.type === 'manager'">+ 약정휴일 등록</router-link>
+       </div>
+       <table class="w-100">
+        <thead>
+          <th>종류</th>
+          <th>유급 여부</th>
+          <th>상세</th>
+        </thead>
+        <tbody>
+          <tr :key="holiday.id" v-for="holiday in holidays">
+            <td>{{ holidayMap(holiday.type) }} </td>
+            <td>{{ holiday.paid ? '유급 휴일' : '무급 휴일' }} </td>
+            <td>{{ holiday.memo }} </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 <script>
@@ -197,7 +216,7 @@ export default {
     },
     tabs () {
       if (!(this.member)) return
-      return this.member.type === 'manager' ? ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표', '직원 관리'] : ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표']
+      return this.member.type === 'manager' ? ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표', '직원 정보', '휴일 시스템'] : ['주별 근무 통계', '월급 통계', '근무내역 상세보기', '+ 근무기록 추가', '스케줄표', '직원 정보']
     },
     thisWeek () {
       if (moment().weekday() === 0) {

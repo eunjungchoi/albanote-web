@@ -5,6 +5,7 @@ import Business from '../views/Business.vue'
 import AddBusiness from '../views/AddBusiness.vue'
 import AddMember from '../views/AddMember.vue'
 import AddTimetable from '../views/AddTimetable.vue'
+import AddHoliday from '../views/AddHoliday.vue'
 import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
 import store from '../store/index.js'
@@ -19,6 +20,7 @@ const routes = [
   { path: '/business/:id', name: 'business', component: Business, meta: { requiresAuth: true } },
   { path: '/business/:id/add-member', name: 'add-member', component: AddMember, meta: { requiresAuth: true } },
   { path: '/business/:id/add-timetable', name: 'add-timetable', component: AddTimetable, meta: { requiresAuth: true } },
+  { path: '/business/:id/add-holiday', name: 'add-holiday', component: AddHoliday, meta: { requiresAuth: true } },
   { path: '/add-business/', name: 'add-business', component: AddBusiness, meta: { requiresAuth: true } }
 ]
 
