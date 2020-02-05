@@ -320,11 +320,14 @@ export default {
       this.selectedTab = tab
     },
     getDuration (member, day) {
+      if (!this.$store.state.works) return
       let date = moment(day[1], 'M/D ddd YYYY').format('YYYY-MM-DD')
       let work = this.$store.state.works.find(work => {
-        return work.member.user.username === member.user.username && work.start_time.slice(0, 10) === date
+        return work.member.user.username === member.user.username && ((work.start_time && work.start_time.slice(0, 10) === date) || (work.date && work.date === date))
       })
-      if (work) return work.duration.slice(0, -3)
+      if (work && work.duration) return work.duration.slice(0, -6) + '시간' + work.duration.slice(-5, -3) + '분'
+      else if (work && work.absence) return this.absenceMap(work.reason)
+      return ''
     },
     weeklySum (member) {
       if (!this.salary) return
