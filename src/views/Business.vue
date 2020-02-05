@@ -376,6 +376,9 @@ export default {
       this.$api.get(`/api/v1/holiday-policies/?business=${this.business.id}`).then(res => {
         this.holidays = res.data
       })
+    },
+    savePayroll (year, month) {
+      this.$api.get(`/api/v1/attendances/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}&save=true`)
     }
   },
   mounted () {
