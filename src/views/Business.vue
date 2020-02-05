@@ -314,7 +314,9 @@ export default {
     },
     add () {
       Object.assign(this.form, { 'business_id': this.business.id })
-      this.$store.dispatch('ADDWORKS', this.form)
+      this.$store.dispatch('ADDWORKS', this.form).then(() => {
+        this.selectedTab = '근무내역 상세보기'
+      })
     },
     toggleTab (tab) {
       this.selectedTab = tab

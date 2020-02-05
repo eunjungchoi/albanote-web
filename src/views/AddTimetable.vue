@@ -66,7 +66,9 @@ export default {
   methods: {
     add () {
       Object.assign(this.form, { 'business_id': this.member.business.id })
-      this.$api.post(`/api/v1/timetables/`, this.form).then(res => console.log(res.data))
+      this.$api.post(`/api/v1/timetables/`, this.form).then(res => {
+        this.$router.back()
+      })
     }
   },
   mounted () {
