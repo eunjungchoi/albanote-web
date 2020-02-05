@@ -266,10 +266,16 @@ export default {
         this.getBusiness()
         this.load()
       }
+    },
+    'business' () {
+      this.getSalaryInfo()
+      this.getPrevSalaryInfo()
+      this.getHolidayPolicies()
     }
   },
   methods: {
     load () {
+      if (!this.business) return
       this.$store.dispatch('WORKS', this.business.id)
       this.$store.dispatch('TIMETABLES', this.business.id)
       if (this.member.type !== 'manager') return
@@ -340,7 +346,13 @@ export default {
     },
     getBusiness () {
       this.member = this.$store.state.members.find(m => {
-        return m.business.id === this.$route.params.id
+        return m.business.id === Number(this.$route.params.id)
+      })
+      if (this.member) {
+        this.business = this.member.business
+      }
+      return this.business
+    },
     getSalaryInfo () {
       let year = this.selectedYear ? this.selectedYear : moment().year()
       let month = this.selectedMonth ? this.selectedMonth : moment().month() + 1
@@ -362,6 +374,12 @@ export default {
     }
   },
   mounted () {
+    if (!this.$store.state.members) {
+      this.$store.dispatch('MEMBERS').then(() => {
+        this.getBusiness()
+        this.load()
+      })
+    }
     this.getBusiness()
     this.load()
   }
