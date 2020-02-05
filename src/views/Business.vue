@@ -98,12 +98,13 @@
         <tbody>
           <tr :key="work.start_time" v-for="work in $store.state.works">
             <td>{{ work.member.user.name }}</td>
-            <td>{{ work.start_time.slice(0, 10) }}</td>
-            <td>{{ work.start_time.slice(11, -4) }}</td>
-            <td>{{ work.end_time.slice(11, -4) }}</td>
-            <td>{{ work.duration.slice(0, -3) }}</td>
+            <td>{{ work.start_time ? work.start_time.slice(0, 10) : work.date ? work.date : '' }}</td>
+            <td>{{ work.start_time ? work.start_time.slice(11, 16) : ''}}</td>
+            <td>{{ work.end_time ? work.end_time.slice(11, 16) : ''}}</td>
+            <td>{{ work.duration ? work.duration.slice(0, -3) : '' }}</td>
             <td>{{ work.late_come ? work.late_come.slice(0, -3) : '' }}</td>
             <td>{{ work.early_leave ? work.early_leave.slice(0, -3) : '' }}</td>
+            <td>{{ work.absence ? absenceMap(work.reason) : '' }}</td>
           </tr>
         </tbody>
       </table>
@@ -150,14 +151,15 @@
           <th :key="column" v-for="column in memberListColumns">{{ column }}</th>
         </thead>
         <tbody>
-        <tr :key="member.user.username" v-for="member in $store.state.allMembers">
+        <tr :key="member.user.username" v-for="member in memberSet">
           <td>{{ member.user.name }}</td>
           <td>{{ member.user.phone }}</td>
           <td>{{ member.latest_work_date ? member.latest_work_date.slice(0, 10) : ''}}</td>
-          <td>{{ member.created.slice(0, 10) }}</td>
+          <td>{{ member.start_date }}</td>
           <td>{{ member.user.sex === 'male' ? '남' : '여' }}</td>
           <td>{{ member.type === 'manager' ? '관리자' : '일반 직원'}}</td>
           <td>{{ member.hourly_wage }}</td>
+          <td>{{ member.annual_leave }}</td>
           <td>{{ member.status === 'active' ? '재직 중' : '퇴사' }}</td>
         </tr>
         </tbody>

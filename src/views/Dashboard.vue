@@ -8,14 +8,6 @@
     </div>
     <hr>
     <div>
-      <h6><strong>이달 누적 월급</strong></h6>
-      <div>: 총 00000원 </div>
-      <div :key="member.business.license_number" v-for="member in $store.state.members">
-        <div>{{ member.business.license_name }} : 총 00 시간  /  000 원 </div>
-      </div>
-    </div>
-    <hr>
-    <div>
       <h6 class="font-weight-bold"> 스케쥴</h6>
       <table class="w-100">
         <thead>
@@ -45,10 +37,10 @@
           <th> 사업장 </th>
         </thead>
         <tbody>
-          <tr :key="work.start_time" v-for="work in $store.state.works">
-            <td>{{ work.start_time.slice(0, 16) }}</td>
-            <td>{{ work.end_time.slice(0, 16) }}</td>
-            <td>{{ work.duration.slice(0, -3) }}</td>
+          <tr :key="work.start_time + work.member.user.name" v-for="work in $store.state.works">
+            <td>{{ work.start_time ? work.start_time.slice(0, 16) : '' }}</td>
+            <td>{{ work.end_time ? work.end_time.slice(0, 16) : '' }}</td>
+            <td>{{ work.duration ? work.duration.slice(0, -3) : '' }}</td>
             <td>{{ work.member.business.license_name }}</td>
           </tr>
         </tbody>
