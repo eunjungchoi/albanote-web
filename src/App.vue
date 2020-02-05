@@ -9,7 +9,7 @@
                             <div class="text-muted">username: {{ $store.state.user.username }}</div>
                             <div class="my-2">{{ $store.state.user.name }} </div>
                             <router-link :to="{ name: 'business' }" class="border-circle">프로필 수정 </router-link>
-                            <span @click="logout" class="border-circle">로그아웃</span>
+                            <a @click="logout" class="border-circle">로그아웃</a>
                         </div>
                     </div>
                     <hr class="sidebar_divider m-0">
@@ -145,5 +145,8 @@ a:hover {
   font-size: 0.875rem;
   /*background-color: #7F7F7F;*/
   /*color: #fff;*/
+}
+a.border-circle:hover {
+  cursor: pointer;
 }
 </style>
