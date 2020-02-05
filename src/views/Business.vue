@@ -42,13 +42,7 @@
       <h6>{{ selectedYear }} 년 {{ selectedMonth }}월 </h6>
       <table class="w-100">
         <thead>
-        <th>담당자 </th>
-        <th>총 근무일수</th>
-        <th>총 근무시간</th>
-        <th>시급 (원)</th>
-        <th>기본급 (원) </th>
-        <th>총 주휴수당</th>
-        <th><strong>급여 총액</strong></th>
+          <th :key="column" v-for="column in monthlySalaryColumns"> {{ column }}</th>
         </thead>
         <tbody>
         <tr :key="member.id" v-for="member in memberSet">
@@ -69,13 +63,7 @@
       </div>
       <table class="w-100">
          <thead>
-          <th>담당자 </th>
-          <th>총 근무일수</th>
-          <th>총 근무시간</th>
-          <th>시급 (원)</th>
-          <th>기본급 (원) </th>
-          <th>총 주휴수당</th>
-          <th><strong>급여 총액</strong></th>
+          <th :key="column" v-for="column in monthlySalaryColumns"> {{ column }}</th>
         </thead>
         <tbody>
           <tr :key="member.id" v-for="member in memberSet">
@@ -199,6 +187,7 @@ export default {
       selectedTab: '주별 근무 통계',
       salary: null,
       prevMonthSalary: null,
+      monthlySalaryColumns: ['담당자', '총 근무일수', '총 근무시간', '시급 (원)', '기본급(원)', '총 주휴수당', '급여 총액'],
       workLogDetailColumns: ['담당자', '날짜', '출근시간', '퇴근시간', '총 근무시간', '지각', '조퇴', '부재'],
       timetableColumns: ['요일', '시작시간', '종료시간', '담당자'],
       memberListColumns: ['이름', '전화번호', '최근 출근일', '가입일', '성별', '직급', '시급', '연차', '상태'],
@@ -363,13 +352,11 @@ export default {
       let month = this.selectedMonth ? this.selectedMonth : moment().month() + 1
       this.$api.get(`/api/v1/attendances/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}`).then(res => {
         this.salary = res.data
-        console.log(this.business.license_name, '월급:', res.data)
       }).catch(err => console.log(err))
     },
     getPrevSalaryInfo () {
       this.$api.get(`/api/v1/attendances/get_monthly_salary/?business=${this.business.id}&year=${this.prevMonth.year()}&month=${this.prevMonth.month() + 1}`).then(res => {
         this.prevMonthSalary = res.data
-        console.log(this.business.license_name, 'prev 월급:', res.data)
       }).catch(err => console.log(err))
     },
     getHolidayPolicies () {
