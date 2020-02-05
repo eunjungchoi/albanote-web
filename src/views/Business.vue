@@ -116,7 +116,14 @@
         <b-form-group label="종료일시" lable-for="end">
           <b-form-input id="end" type="datetime-local" v-model="form.end_time"></b-form-input>
         </b-form-group>
-        <b-button type="submit" class="btn-block btn-lg cashnote-green" variant="secondary">추가</b-button>
+        <b-form-checkbox id="absence" v-model="form.absence" name="absence" value=1 unchecked-value=0>부재</b-form-checkbox>
+        <b-form-group label="사유" label-for="reason" v-if="form.absence > 0">
+            <b-form-radio-group id="reason" v-model="form.reason" :options="offReasonOptions" name="reason"></b-form-radio-group>
+        </b-form-group>
+        <b-form-group label="날짜" label-for="date" v-if="form.absence > 0">
+          <b-form-input id="date" type="date" v-model="form.date"></b-form-input>
+        </b-form-group>
+        <b-button type="submit" class="btn-block btn-lg cashnote-green my-3" variant="secondary">추가</b-button>
       </b-form>
     </div>
     <div v-if="selectedTab === '스케줄표'">
@@ -193,13 +200,23 @@ export default {
       prevMonthSalary: null,
       timetableColumns: ['요일', '시작시간', '종료시간', '담당자'],
       memberListColumns: ['이름', '전화번호', '최근 출근일', '가입일', '성별', '직급', '시급', '상태'],
+      holidays: null,
       today: moment().format(),
       selectedYear: moment().year(),
       selectedMonth: moment().month() + 1,
       prevMonth: moment().subtract(1, 'months'),
+      offReasonOptions: [
+        { text: '법정휴일', value: 0 },
+        { text: '약정휴일', value: 1 },
+        { text: '연차', value: 2 },
+        { text: '결근', value: 3 }
+      ],
       form: {
-        start_time: moment().format('YYYY-MM-DThh:mm').toString(),
-        end_time: moment().format('YYYY-MM-DThh:mm').toString()
+        start_time: moment().format('YYYY-MM-DDThh:mm').toString(),
+        end_time: moment().format('YYYY-MM-DDThh:mm').toString(),
+        absence: 0,
+        reason: 3,
+        date: moment().format('YYYY-MM-DD').toString()
       }
     }
   },
@@ -268,6 +285,25 @@ export default {
       }
       return map[day]
     },
+    absenceMap (reason) {
+      let map = {
+        0: '법정휴일',
+        1: '약정휴일',
+        2: '연차',
+        3: '결근'
+      }
+      return map[reason]
+    },
+    holidayMap (type) {
+      let map = {
+        0: '공휴일',
+        1: '창립기념일',
+        2: '병가',
+        3: '경조사',
+        4: '기타'
+      }
+      return map[type]
+    },
     add () {
       Object.assign(this.form, { 'business_id': this.business.id })
       this.$store.dispatch('ADDWORKS', this.form)
@@ -317,8 +353,10 @@ export default {
         console.log(this.business.license_name, 'prev 월급:', res.data)
       }).catch(err => console.log(err))
     },
+    getHolidayPolicies () {
+      this.$api.get(`/api/v1/holiday-policies/?business=${this.business.id}`).then(res => {
+        this.holidays = res.data
       })
-      this.business = this.member.business
     }
   },
   mounted () {
