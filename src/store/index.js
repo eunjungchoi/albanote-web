@@ -24,7 +24,7 @@ export default new Vuex.Store({
     user: null,
     members: null,
     allMembers: null,
-    works: null,
+    works: [],
     timetables: null
   },
   mutations: {
@@ -51,7 +51,7 @@ export default new Vuex.Store({
       state.works = works
     },
     ADDWORKS (state, works) {
-      state.works.push(works)
+      state.works.unshift(works)
     },
     TIMETABLES (state, timetables) {
       state.timetables = timetables
@@ -96,7 +96,7 @@ export default new Vuex.Store({
         .catch(err => console.log(err))
     },
     WORKS ({ commit }, businessId, month) {
-      let url = `/api/v1/works`
+      let url = `/api/v1/attendances`
       if (businessId) {
         url = `${url}/?business=${businessId}`
       }
@@ -104,7 +104,7 @@ export default new Vuex.Store({
         .catch(err => console.log(err))
     },
     ADDWORKS ({ commit }, form) {
-      return api.post(`/api/v1/works/`, form).then(res => commit('ADDWORKS', res.data))
+      return api.post(`/api/v1/attendances/`, form).then(res => commit('ADDWORKS', res.data))
     },
     ADDBUSINESS ({ commit }, form) {
       return api.post(`/api/v1/businesses/`, form).then(res => commit('ADDMEMBER', res.data.member))
