@@ -28,7 +28,12 @@
              <td :key="day[0]">{{ getDuration(member, day) }}</td>
            </template>
            <td> {{ weeklySum(member) }}시간</td>
-           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_hours : 0 }}시간</td>
+           <td>
+             <div>{{ getMemberSalary(member) ? getMemberSalary(member).total_hours : 0 }}시간</div>
+             <div>{{ getMemberSalary(member) ? getMemberSalary(member).working_days : 0 }}일
+              (지각: {{ getMemberSalary(member) ? getMemberSalary(member).late_come_count : 0 }} 일)
+             </div>
+           </td>
          </tr>
       </tbody>
       </table>
@@ -38,6 +43,7 @@
       <table class="w-100">
         <thead>
         <th>담당자 </th>
+        <th>총 근무일수</th>
         <th>총 근무시간</th>
         <th>시급 (원)</th>
         <th>기본급 (원) </th>
@@ -47,12 +53,40 @@
         <tbody>
         <tr :key="member.id" v-for="member in memberSet">
           <td>{{ member.user.name }}</td>
+          <td>{{ getMemberSalary(member) ? getMemberSalary(member).working_days : 0}} 일 </td>
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_hours : 0}}시간 </td>
           <td>{{ member.hourly_wage}} </td>
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).base_salary : 0}} </td>
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_extra_pay : 0}}원 </td>
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_monthly_pay : 0}}원</td>
         </tr>
+        </tbody>
+      </table>
+      <hr>
+      <h6>{{ prevMonth.year() }} 년 {{ prevMonth.month() + 1 }}월 </h6>
+      <div class="text-right my-1" v-if="member.type === 'manager'">
+        <b-button @click="savePayroll(prevMonth.year(), prevMonth.month() +1)">급여명세 생성 </b-button>
+      </div>
+      <table class="w-100">
+         <thead>
+          <th>담당자 </th>
+          <th>총 근무일수</th>
+          <th>총 근무시간</th>
+          <th>시급 (원)</th>
+          <th>기본급 (원) </th>
+          <th>총 주휴수당</th>
+          <th><strong>급여 총액</strong></th>
+        </thead>
+        <tbody>
+          <tr :key="member.id" v-for="member in memberSet">
+            <td>{{ member.user.name }}</td>
+            <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).working_days : 0}} 일 </td>
+            <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_hours : 0}}시간 </td>
+            <td>{{ member.hourly_wage}} </td>
+            <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).base_salary : 0}} </td>
+            <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_extra_pay : 0}}원 </td>
+            <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_monthly_pay : 0}}원</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -137,11 +171,13 @@ export default {
       selectedTab: '주별 근무 통계',
       salary: null,
       workLogDetailColumns: ['담당자', '날짜', '출근시간', '퇴근시간', '총 근무시간', '지각', '조퇴'],
+      prevMonthSalary: null,
       timetableColumns: ['요일', '시작시간', '종료시간', '담당자'],
       memberListColumns: ['이름', '전화번호', '최근 출근일', '가입일', '성별', '직급', '시급', '상태'],
       today: moment().format(),
       selectedYear: moment().year(),
-      selectedMonth: moment().month(),
+      selectedMonth: moment().month() + 1,
+      prevMonth: moment().subtract(1, 'months'),
       form: {
         start_time: moment().format('YYYY-MM-DThh:mm').toString(),
         end_time: moment().format('YYYY-MM-DThh:mm').toString()
@@ -234,18 +270,34 @@ export default {
       let date = moment(firstDayOfTheWeek, 'M/D ddd YYYY').format('YYYY-MM-DD')
       return memberSalary ? memberSalary.weekly_hours[date] : 0
     },
-    getMemberSalary (member) {
+    getMemberSalary (member, salary = null) {
       let memberSalary = 0
-      if (this.salary) {
-        memberSalary = this.salary.members.find(m => {
-          return m.id === member.id
-        })
+      if (!salary) {
+        salary = this.salary
       }
+      if (!salary) return
+      memberSalary = salary.members.find(m => {
+        return m.id === member.id
+      })
       return memberSalary
     },
     getBusiness () {
       this.member = this.$store.state.members.find(m => {
         return m.business.id === this.$route.params.id
+    getSalaryInfo () {
+      let year = this.selectedYear ? this.selectedYear : moment().year()
+      let month = this.selectedMonth ? this.selectedMonth : moment().month() + 1
+      this.$api.get(`/api/v1/attendances/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}`).then(res => {
+        this.salary = res.data
+        console.log(this.business.license_name, '월급:', res.data)
+      }).catch(err => console.log(err))
+    },
+    getPrevSalaryInfo () {
+      this.$api.get(`/api/v1/attendances/get_monthly_salary/?business=${this.business.id}&year=${this.prevMonth.year()}&month=${this.prevMonth.month() + 1}`).then(res => {
+        this.prevMonthSalary = res.data
+        console.log(this.business.license_name, 'prev 월급:', res.data)
+      }).catch(err => console.log(err))
+    },
       })
       this.business = this.member.business
     }
@@ -253,11 +305,6 @@ export default {
   mounted () {
     this.getBusiness()
     this.load()
-    let year = this.selectedYear ? this.selectedYear : moment().year()
-    let month = this.selectedMonth ? this.selectedMonth : moment().month() + 1
-    this.$api.get(`/api/v1/works/get_monthly_salary/?business=${this.business.id}&year=${year}&month=${month}`).then(res => {
-      this.salary = res.data
-    }).catch(err => console.log(err))
   }
 }
 </script>
