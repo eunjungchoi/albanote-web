@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <h6 class="my-4" v-if="member">{{ member.business.license_name }}</h6>
-    <hr>
+  <div class="mb-5">
     <div v-if="!added">
       <h5 class="py-3"><strong>직원을 등록하세요</strong></h5>
-      <b-form @submit.prevent="add">
+      <b-form @submit.prevent="addOrUpdate">
       <b-form-group label="직원 아이디" label-for="user-id">
         <b-form-input id="user-id" v-model="form.user_id" type="text"></b-form-input>
       </b-form-group>
@@ -30,7 +28,7 @@
         name="insurance"
       ></b-form-checkbox-group>
       </b-form-group>
-      <b-button class="btn-block btn-lg cashnote-green" type="submit">추가</b-button>
+      <b-button class="btn-block btn-lg cashnote-green" type="submit">저장</b-button>
     </b-form>
     </div>
     <div v-else>
@@ -43,16 +41,17 @@
 import moment from 'moment'
 
 export default {
-  name: 'addMember',
+  name: 'saveMember',
+  props: ['target-member'],
   data () {
     return {
       member: null,
       form: {
-        user_id: null,
-        hourly_wage: 0,
-        weekly_holiday: 6,
+        user_id: this.targetMember ? this.targetMember.user.username : null,
+        hourly_wage: this.targetMember ? this.targetMember.hourly_wage : 0,
+        weekly_holiday: this.targetMember ? this.targetMember.weekly_holiday : 6,
         insurance: [],
-        start_date: moment().format('YYYY-MM-DD').toString()
+        start_date: this.targetMember ? this.targetMember.start_date : moment().format('YYYY-MM-DD').toString()
       },
       options: [
         { text: '국민연금', value: '0' },
@@ -75,13 +74,26 @@ export default {
     }
   },
   methods: {
-    add () {
-      Object.assign(this.form, { 'business_id': this.member.business.id })
-      this.$api.post(`/api/v1/members/`, this.form).then(res => {
-        this.added = true
-        this.newlyAddedMember = res.data
-        this.$router.back()
-      })
+    addOrUpdate () {
+      let businessId = null
+      if (this.targetMember) {
+        businessId = this.targetMember.business.id
+      } else {
+        businessId = this.member.business.id
+      }
+      Object.assign(this.form, { 'business_id': businessId })
+      if (this.targetMember) {
+        this.$api.put(`/api/v1/members/${this.targetMember.id}/`, this.form).then(res => {
+          this.$store.dispatch('UPDATE_MEMBER', res.data)
+          this.$emit('saved-member')
+        })
+      } else {
+        this.$api.post(`/api/v1/members/`, this.form).then(res => {
+          this.added = true
+          this.newlyAddedMember = res.data
+          this.$router.back()
+        })
+      }
     }
   },
   mounted () {

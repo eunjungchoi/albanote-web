@@ -134,9 +134,13 @@
       </table>
     </div>
     <div v-if="selectedTab === '직원 정보'">
+      <div v-if="editMemberMode">
+        <save-member :target-member="targetMember" @saved-member="savedMember"></save-member>
+      </div>
       <table class="w-100">
         <thead>
           <th :key="column" v-for="column in memberListColumns">{{ column }}</th>
+          <th v-if="member && member.type === 'manager'"></th>
         </thead>
         <tbody>
         <tr :key="member.user.username" v-for="member in memberSet">
@@ -149,6 +153,9 @@
           <td>{{ member.hourly_wage }}</td>
           <td>{{ member.annual_leave }}</td>
           <td>{{ member.status === 'active' ? '재직 중' : '퇴사' }}</td>
+          <td v-if="member && member.type === 'manager'">
+            <b-button @click="edit(member)">수정</b-button>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -176,14 +183,20 @@
 </template>
 <script>
 import moment from 'moment'
+import saveMember from './AddMember'
 
 export default {
   name: 'business',
+  components: {
+    'save-member': saveMember
+  },
   data () {
     return {
       member: null,
       works: [],
       business: null,
+      editMemberMode: false,
+      targetMember: null,
       selectedTab: '주별 근무 통계',
       salary: null,
       prevMonthSalary: null,
@@ -307,6 +320,14 @@ export default {
         this.selectedTab = '근무내역 상세보기'
       })
     },
+    edit (member) {
+      this.editMemberMode = true
+      this.targetMember = member
+    },
+    savedMember () {
+      this.editMemberMode = false
+      this.targetMember = null
+    },
     toggleTab (tab) {
       this.selectedTab = tab
     },
@@ -339,6 +360,7 @@ export default {
       return memberSalary
     },
     getBusiness () {
+      if (!this.$store.state.members) return
       this.member = this.$store.state.members.find(m => {
         return m.business.id === Number(this.$route.params.id)
       })

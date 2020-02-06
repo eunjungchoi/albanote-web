@@ -44,6 +44,12 @@ export default new Vuex.Store({
     ALL_MEMBERS_OF_BUSINESS (state, members) {
       state.allMembers = members
     },
+    UPDATE_MEMBER (state, member) {
+      let index = state.allMembers.findIndex(m => {
+        return m.id === member.id
+      })
+      state.allMembers.splice(index, 1, member)
+    },
     ADDMEMBER (state, member) {
       state.members.push(member)
     },
@@ -81,6 +87,9 @@ export default new Vuex.Store({
     MEMBERS ({ commit }) {
       return api.get(`/api/v1/members/`).then(res => commit('MEMBERS', res.data))
         .catch(err => console.log(err))
+    },
+    UPDATE_MEMBER ({ commit }, member) {
+      commit('UPDATE_MEMBER', member)
     },
     ALL_MEMBERS_OF_BUSINESS ({ commit }, businessId) {
       return api.get(`/api/v1/members/all_members_of_business/?business=${businessId}`)
