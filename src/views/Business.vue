@@ -147,18 +147,18 @@
           <th v-if="member && member.type === 'manager'"></th>
         </thead>
         <tbody>
-        <tr :key="member.user.username" v-for="member in memberSet">
-          <td>{{ member.user.name }}</td>
-          <td>{{ member.user.phone }}</td>
-          <td>{{ member.latest_work_date ? member.latest_work_date.slice(0, 10) : ''}}</td>
-          <td>{{ member.start_date }}</td>
-          <td>{{ member.user.sex === 'male' ? '남' : '여' }}</td>
-          <td>{{ member.type === 'manager' ? '관리자' : '일반 직원'}}</td>
-          <td>{{ member.hourly_wage }}</td>
-          <td>{{ member.annual_leave }}</td>
-          <td>{{ member.status === 'active' ? '재직 중' : '퇴사' }}</td>
+        <tr :key="m.user.username" v-for="m in memberSet">
+          <td>{{ m.user.name }}</td>
+          <td>{{ m.user.phone }}</td>
+          <td>{{ m.latest_work_date ? m.latest_work_date.slice(0, 10) : ''}}</td>
+          <td>{{ m.start_date }}</td>
+          <td>{{ m.user.sex === 'male' ? '남' : '여' }}</td>
+          <td>{{ m.type === 'manager' ? '관리자' : '일반 직원'}}</td>
+          <td>{{ m.hourly_wage }}</td>
+          <td>{{ m.annual_leave }}</td>
+          <td>{{ m.status === 'active' ? '재직 중' : '퇴사' }}</td>
           <td v-if="member && member.type === 'manager'">
-            <b-button @click="edit(member)">수정</b-button>
+            <b-button class="button-gray" @click="edit(member)">수정</b-button>
           </td>
         </tr>
         </tbody>
