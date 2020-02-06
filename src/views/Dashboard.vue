@@ -27,25 +27,6 @@
       </table>
     </div>
     <hr>
-    <div>
-      <h6><strong>{{ $store.state.user.name}} 님의 최근 근무내역</strong></h6>
-      <table class="w-100">
-        <thead>
-          <th> 시작일시 </th>
-          <th> 종료일시 </th>
-          <th> 총 근무시간 </th>
-          <th> 사업장 </th>
-        </thead>
-        <tbody>
-          <tr :key="work.start_time + work.member.user.name" v-for="work in $store.state.works">
-            <td>{{ work.start_time ? work.start_time.slice(0, 16) : '' }}</td>
-            <td>{{ work.end_time ? work.end_time.slice(0, 16) : '' }}</td>
-            <td>{{ work.duration ? work.duration.slice(0, -3) : '' }}</td>
-            <td>{{ work.member.business.license_name }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 </template>
 <script>
