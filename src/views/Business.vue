@@ -51,7 +51,13 @@
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_hours : 0}}시간 </td>
           <td>{{ member.hourly_wage}} </td>
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).base_salary : 0}} </td>
-          <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_extra_pay : 0}}원 </td>
+          <td>
+            <div>{{ getMemberSalary(member) ? getMemberSalary(member).total_extra_pay : 0}}원</div>
+            <div v-if="getMemberSalary(member)">
+              <span :key="key" v-for="key in Object.keys(getMemberSalary(member).extra_pay_list)">
+                {{key}}~: {{ getMemberSalary(member).extra_pay_list[key]}} </span>
+            </div>
+          </td>
           <td>{{ getMemberSalary(member) ? getMemberSalary(member).total_monthly_pay : 0}}원</td>
         </tr>
         </tbody>
@@ -72,7 +78,14 @@
             <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_hours : 0}}시간 </td>
             <td>{{ member.hourly_wage}} </td>
             <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).base_salary : 0}} </td>
-            <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_extra_pay : 0}}원 </td>
+            <td>
+              <div>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_extra_pay : 0}}원</div>
+              <div v-if="getMemberSalary(member, prevMonthSalary)">
+                <span class="mr-1" :key="key" v-for="key in Object.keys(getMemberSalary(member, prevMonthSalary).extra_pay_list)">
+                  {{key}}~: {{ getMemberSalary(member, prevMonthSalary).extra_pay_list[key]}}
+                </span>
+              </div>
+            </td>
             <td>{{ getMemberSalary(member, prevMonthSalary) ? getMemberSalary(member, prevMonthSalary).total_monthly_pay : 0}}원</td>
           </tr>
         </tbody>
