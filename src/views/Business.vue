@@ -95,7 +95,7 @@
             <td>{{ work.early_leave ? work.early_leave.slice(0, -3) : '' }}</td>
             <td>{{ work.absence ? absenceMap(work.reason) : '' }}</td>
             <td>
-              <b-button class="button-gray" @click="deleteAttendance(work)">삭제</b-button>
+              <b-button class="button-gray" @click="deleteAttendance(work)" v-if="work.member.id === member.id">삭제</b-button>
             </td>
           </tr>
         </tbody>
