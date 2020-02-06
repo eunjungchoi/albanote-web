@@ -82,6 +82,7 @@
       <table class="w-100">
         <thead>
           <th :key="column" v-for="column in workLogDetailColumns">{{ column }}</th>
+          <th></th>
         </thead>
         <tbody>
           <tr :key="work.start_time" v-for="work in $store.state.works">
@@ -93,6 +94,9 @@
             <td>{{ work.late_come ? work.late_come.slice(0, -3) : '' }}</td>
             <td>{{ work.early_leave ? work.early_leave.slice(0, -3) : '' }}</td>
             <td>{{ work.absence ? absenceMap(work.reason) : '' }}</td>
+            <td>
+              <b-button class="button-gray" @click="deleteAttendance(work)">삭제</b-button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -327,6 +331,12 @@ export default {
     savedMember () {
       this.editMemberMode = false
       this.targetMember = null
+    },
+    deleteAttendance (attendance) {
+      let id = attendance.id
+      this.$api.delete(`/api/v1/attendances/${id}`).then(res => {
+        this.$store.dispatch('REMOVE_WORK', id)
+      }).catch(err => console.log(err))
     },
     toggleTab (tab) {
       this.selectedTab = tab

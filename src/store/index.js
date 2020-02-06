@@ -59,6 +59,12 @@ export default new Vuex.Store({
     ADDWORKS (state, works) {
       state.works.unshift(works)
     },
+    REMOVE_WORK (state, workId) {
+      let index = state.works.findIndex(w => {
+        return w.id === workId
+      })
+      state.works.splice(index, 1)
+    },
     TIMETABLES (state, timetables) {
       state.timetables = timetables
     }
@@ -114,6 +120,9 @@ export default new Vuex.Store({
     },
     ADDWORKS ({ commit }, form) {
       return api.post(`/api/v1/attendances/`, form).then(res => commit('ADDWORKS', res.data))
+    },
+    REMOVE_WORK ({ commit }, id) {
+      commit('REMOVE_WORK', id)
     },
     ADDBUSINESS ({ commit }, form) {
       return api.post(`/api/v1/businesses/`, form).then(res => commit('ADDMEMBER', res.data.member))

@@ -149,4 +149,9 @@ a:hover {
 a.border-circle:hover {
   cursor: pointer;
 }
+.button-gray {
+  background-color: lightgrey;
+  color: rgb(51, 62, 72);
+  border-color: lightgrey;
+}
 </style>
