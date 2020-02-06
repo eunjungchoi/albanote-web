@@ -169,7 +169,9 @@
           <td>{{ m.type === 'manager' ? '관리자' : '일반 직원'}}</td>
           <td>{{ m.hourly_wage }}</td>
           <td>{{ m.annual_leave }}</td>
-          <td>{{ m.status === 'active' ? '재직 중' : '퇴사' }}</td>
+          <td>{{ m.status === 'active' ? '재직 중' : '퇴사 '}}
+            <div v-if="m.status === 'inactive'"> {{ m.resignation_date}}</div>
+          </td>
           <td v-if="member && member.type === 'manager'">
             <b-button class="button-gray" @click="edit(member)">수정</b-button>
           </td>
